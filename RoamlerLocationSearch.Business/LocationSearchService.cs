@@ -3,6 +3,7 @@ using RoamlerLocationSearch.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace RoamlerLocationSearch.Business
 {
@@ -71,6 +72,33 @@ namespace RoamlerLocationSearch.Business
 
                 //Filter by the max Number of Results
                 filteredList = filterRepeated.Where(x => x.Distance <= maxDistance).Take(maxResults).ToList();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+
+            return filteredList;
+        }
+
+        public async Task<List<Location>> GetLocationsAsync(Location pLocation, int maxDistance, int maxResults)
+        {
+            List<Location> filteredList = new List<Location>();
+            try
+            {
+                List<Location> Locations = await _LocationDataAccess.GetLocationsAsync();
+
+                //Sort by Distance
+                List<Location> SortedList = Locations;//.OrderBy(o => o.CalculateDistance(pLocation)).ToList();
+
+                //Filter the Locations with the same Distance, Longitude and Latitude
+                List<Location> filterRepeated = SortedList.GroupBy(x => new { x.Distance, x.Longitude, x.Latitude })
+                                                   .Select(g => g.First())
+                                                   .ToList();
+
+                //Filter by the max Number of Results
+                filteredList = filterRepeated.Where(x => x.Distance <= maxDistance).Take(maxResults).ToList();
+
             }
             catch (Exception ex)
             {

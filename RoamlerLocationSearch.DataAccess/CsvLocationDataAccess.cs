@@ -33,6 +33,48 @@ namespace RoamlerLocationSearch.DataAccess
             }
         }
 
+        public async Task<List<Location>> GetLocationsAsync()
+        {
+            try
+            {
+                List<Location> Locations = new List<Location>();
+
+                if (_cache.Get("LocationsList") == null)
+                {
+                    string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
+                    using (var reader = new StreamReader(fileLocation))
+                    {
+                        string line;
+                        while ((line = await reader.ReadLineAsync()) != null)
+                        {
+                            string[] data = line.Split(new[] { "\",\"" }, StringSplitOptions.RemoveEmptyEntries);
+                            string Address = data.ElementAt(0) == null ? "" : data.ElementAt(0).TrimStart('\"');
+                            double Latitude = data.Length > 1 ? double.Parse(data.ElementAt(1)) : 0.0;
+                            double Longitude = data.Length > 2 ? double.Parse(data.ElementAt(2).TrimEnd('\"')) : 0.0;
+                            Locations.Add(new Location(Latitude, Longitude, Address));
+                        }
+
+                        // Set cache options.
+                        var cacheEntryOptions = new MemoryCacheEntryOptions()
+                            // Keep in cache for this time, reset time if accessed.
+                            .SetSlidingExpiration(TimeSpan.FromMinutes(3));
+
+                        // Save data in cache.
+                        _cache.Set("LocationsList", Locations, cacheEntryOptions);
+                    }
+                }
+                else
+                {
+                    _cache.TryGetValue("LocationsList", out Locations);
+                }
+                return Locations;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+
         // cache + File Read + Parallel
         private List<Location> getAllLocationsCacheFileReadParallel()
         {
@@ -87,10 +129,10 @@ namespace RoamlerLocationSearch.DataAccess
                 if (_cache.Get("LocationsList") == null)
                 {
                     string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
-                    using (StreamReader sr = new StreamReader(fileLocation))
+                    using (StreamReader reader = new StreamReader(fileLocation))
                     {
                         string line;
-                        while ((line = sr.ReadLine()) != null)
+                        while ((line = reader.ReadLine()) != null)
                         {
                             string[] data = line.Split(new[] { "\",\"" }, StringSplitOptions.RemoveEmptyEntries);
                             string Address = data.ElementAt(0) == null ? "" : data.ElementAt(0).TrimStart('\"');
@@ -163,5 +205,6 @@ namespace RoamlerLocationSearch.DataAccess
                 throw ex;
             }
         }
+
     }
 }
