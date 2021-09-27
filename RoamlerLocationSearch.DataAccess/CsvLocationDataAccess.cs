@@ -12,10 +12,14 @@ namespace RoamlerLocationSearch.DataAccess
     public class CsvLocationDataAccess: ILocationDataAccess
     {
         private IMemoryCache _cache;
+        //private readonly IConfiguration _config;
 
-        public CsvLocationDataAccess(IMemoryCache memoryCache)
+        public CsvLocationDataAccess(IMemoryCache memoryCache
+            //, private readonly IConfiguration config
+            )
         {
             _cache = memoryCache;
+            //_config = config;
         }
 
         public List<Location> GetLocations()
