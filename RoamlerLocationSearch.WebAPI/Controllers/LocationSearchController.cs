@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace RoamlerLocationSearch.WebAPI.Controllers
 {
+    [ApiVersion("1.0")]
     public class LocationSearchController : Controller
     {
         private readonly ILogger<LocationSearchController> _logger;

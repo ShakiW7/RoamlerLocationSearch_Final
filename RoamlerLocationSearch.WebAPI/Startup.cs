@@ -37,6 +37,13 @@ namespace RoamlerLocationSearch.WebAPI
             services.AddTransient<ILocationDataAccess, CsvLocationDataAccess>();
             services.AddTransient<ILocationSearchService, LocationSearchService>();
             services.AddMemoryCache();
+
+            services.AddApiVersioning(o =>
+            {
+                o.ReportApiVersions = true;
+                o.AssumeDefaultVersionWhenUnspecified = true;
+                o.DefaultApiVersion = new ApiVersion(1, 0);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +55,10 @@ namespace RoamlerLocationSearch.WebAPI
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Location v1"));
             }
+
+            app.UseHsts();
+
+            app.UseMiddleware<SecurityHeadersMiddleware>();
 
             app.UseHttpsRedirection();
 

@@ -131,6 +131,7 @@ namespace RoamlerLocationSearch.DataAccess
                     string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
                     using (StreamReader reader = new StreamReader(fileLocation))
                     {
+                        reader.ReadLine(); //to skip the headers
                         string line;
                         while ((line = reader.ReadLine()) != null)
                         {

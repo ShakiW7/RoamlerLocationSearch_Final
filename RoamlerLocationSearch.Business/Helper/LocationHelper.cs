@@ -5,12 +5,12 @@ using System.Text;
 
 namespace RoamlerLocationSearch.Business.Helper
 {
-    public class LocationHelper
+    public static class LocationHelper
     {
         /// <summary>
         /// Calculates the distance between this location and another one, in meters.
         /// </summary>
-        public double CalculateDistance(Location location1, Location location2)
+        public static double CalculateDistance(Location location1, Location location2)
         {
             var rlat1 = Math.PI * location1.Latitude / 180;
             var rlat2 = Math.PI * location2.Latitude / 180;
