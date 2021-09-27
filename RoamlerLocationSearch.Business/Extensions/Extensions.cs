@@ -1,4 +1,5 @@
-﻿using RoamlerLocationSearch.Domain.Entities;
+﻿using RoamlerLocationSearch.Business.Helper;
+using RoamlerLocationSearch.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,8 @@ namespace RoamlerLocationSearch.Business.Extensions
     {
         public static IQueryable<Location> orderLocationby(this IQueryable<Location> input)
         {
-            //input.OrderBy(loc => CalculateDistance(loc))
+          //  LocationHelper locationHelper = new LocationHelper();
+          //  input.OrderBy(loc => locationHelper.CalculateDistance(loc))
             return input;
         }
     }

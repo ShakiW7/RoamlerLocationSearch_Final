@@ -25,22 +25,53 @@ namespace RoamlerLocationSearch.WebAPI.Controllers
         [Route("getLocations")]
         public ActionResult<SearchResult> GetLocations(double latitude, double longitude, int maxDistance, int maxResults)
         {
-            Location locationobject = new Location()
-            {
-                Latitude = latitude,
-                Longitude = longitude
-            };
+            DateTime t1 = DateTime.UtcNow;
 
-           // _locationSearchService.GetLocations();
-            return Ok();
+            Location locationobject = new Location(latitude, longitude, "");
+
+            List<Location> locationList = _locationSearchService.GetLocations(locationobject, maxDistance, maxResults);
+
+            // TODO: tidy up
+            SearchResult returnSearchResult = new SearchResult();
+            returnSearchResult.Latitude = latitude;
+            returnSearchResult.Longitude = longitude;
+            returnSearchResult.MaxDistance = maxDistance;
+            returnSearchResult.MaxResults = maxResults;
+            returnSearchResult.RecordCount = locationList.Count;
+            returnSearchResult.Locations = locationList;
+
+            DateTime t2 = DateTime.UtcNow;
+            TimeSpan t = t2 - t1;
+            double d = t.TotalSeconds;
+            returnSearchResult.TotalDuration = d;
+
+            return Ok(returnSearchResult);
         }
 
         [HttpGet]
         [Route("getLocationsParallel")]
         public IActionResult GetLocationsParallel(double latitude, double longitude, int maxDistance, int maxResults)
         {
-            //_locationSearchService.GetLocationsParallel();
-            return Ok();
+            DateTime t1 = DateTime.UtcNow;
+
+            Location locationobject = new Location(latitude, longitude, "");
+            List<Location> locationList = _locationSearchService.GetLocationsParallel(locationobject, maxDistance, maxResults);
+
+            // TODO: tidy up
+            SearchResult returnSearchResult = new SearchResult();
+            returnSearchResult.Latitude = latitude;
+            returnSearchResult.Longitude = longitude;
+            returnSearchResult.MaxDistance = maxDistance;
+            returnSearchResult.MaxResults = maxResults;
+            returnSearchResult.RecordCount = locationList.Count;
+            returnSearchResult.Locations = locationList;
+
+            DateTime t2 = DateTime.UtcNow;
+            TimeSpan t = t2 - t1;
+            double d = t.TotalSeconds;
+            returnSearchResult.TotalDuration = d;
+
+            return Ok(returnSearchResult);
         }
     }
 }

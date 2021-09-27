@@ -7,7 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using RoamlerLocationSearch.Business;
 using RoamlerLocationSearch.DataAccess;
+using RoamlerLocationSearch.WebAPI.Controllers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,7 +34,8 @@ namespace RoamlerLocationSearch.WebAPI
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Location", Version = "v1" });
             });
-            //services.AddTransient<LocationRepository, ILocationDataAccess>();
+            services.AddTransient<ILocationDataAccess, CsvLocationDataAccess>();
+            services.AddTransient<ILocationSearchService, LocationSearchService>();
             services.AddMemoryCache();
         }
 

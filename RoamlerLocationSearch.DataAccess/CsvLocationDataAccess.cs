@@ -40,7 +40,7 @@ namespace RoamlerLocationSearch.DataAccess
             {
                 List<Location> Locations = new List<Location>();
 
-                if (!_cache.TryGetValue("LocationsList", out Locations))
+                if (_cache.Get("LocationsList") == null)
                 {
                     string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
                     string[] AllLines = File.ReadAllLines(fileLocation);
@@ -54,13 +54,7 @@ namespace RoamlerLocationSearch.DataAccess
                         double Latitude = data.Length > 1 ? double.Parse(data.ElementAt(1)) : 0.0;
                         double Longitude = data.Length > 2 ? double.Parse(data.ElementAt(2).TrimEnd('\"')) : 0.0;
 
-                        Locations.Add(new Location()
-                        {
-                            Address = Address,
-                            Latitude = Latitude,
-                            Longitude = Longitude,
-                            Distance = 0
-                        });
+                        Locations.Add(new Location(Latitude, Longitude, Address));
                     });
 
                     // Set cache options.
@@ -70,6 +64,10 @@ namespace RoamlerLocationSearch.DataAccess
 
                     // Save data in cache.
                     _cache.Set("LocationsList", Locations, cacheEntryOptions);
+                }
+                else
+                {
+                    _cache.TryGetValue("LocationsList", out Locations);
                 }
                 return Locations;
             }
@@ -86,7 +84,7 @@ namespace RoamlerLocationSearch.DataAccess
             {
                 List<Location> Locations = new List<Location>();
 
-                if (!_cache.TryGetValue("LocationsList", out Locations))
+                if (_cache.Get("LocationsList") == null)
                 {
                     string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
                     using (StreamReader sr = new StreamReader(fileLocation))
@@ -98,14 +96,7 @@ namespace RoamlerLocationSearch.DataAccess
                             string Address = data.ElementAt(0) == null ? "" : data.ElementAt(0).TrimStart('\"');
                             double Latitude = data.Length > 1 ? double.Parse(data.ElementAt(1)) : 0.0;
                             double Longitude = data.Length > 2 ? double.Parse(data.ElementAt(2).TrimEnd('\"')) : 0.0;
-                            Locations.Add(new Location()
-                            {
-                                Address = Address,
-                                Latitude = Latitude,
-                                Longitude = Longitude,
-                                Distance = 0
-                            });
-
+                            Locations.Add(new Location(Latitude, Longitude, Address));
                         }
                     }
 
@@ -116,6 +107,10 @@ namespace RoamlerLocationSearch.DataAccess
 
                     // Save data in cache.
                     _cache.Set("LocationsList", Locations, cacheEntryOptions);
+                }
+                else
+                {
+                    _cache.TryGetValue("LocationsList",out Locations);
                 }
                 return Locations;
             }
@@ -132,25 +127,19 @@ namespace RoamlerLocationSearch.DataAccess
             {
                 List<Location> Locations = new List<Location>();
 
-                if (!_cache.TryGetValue("LocationsList", out Locations))
+                if (_cache.Get("LocationsList") == null)
                 {
                     string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
 
                     string[] AllLines = File.ReadAllLines(fileLocation);
 
-                    var qLocations = AllLines.Select(data =>
+                    var qLocations = AllLines.Skip(1).Select(data =>
                     {
                         var data2 = data.Split(new[] { "\",\"" }, StringSplitOptions.RemoveEmptyEntries);
                         string Address = data2.ElementAt(0) == null ? "" : data2.ElementAt(0).TrimStart('\"');
                         double Latitude = data2.Length > 1 ? double.Parse(data2.ElementAt(1)) : 0.0;
                         double Longitude = data2.Length > 2 ? double.Parse(data2.ElementAt(2).TrimEnd('\"')) : 0.0;
-                        return new Location()
-                        {
-                            Address = Address,
-                            Latitude = Latitude,
-                            Longitude = Longitude,
-                            Distance = 0
-                        };
+                        return new Location(Latitude, Longitude, Address);
 
                     });
                     Locations = qLocations.ToList();
@@ -162,6 +151,10 @@ namespace RoamlerLocationSearch.DataAccess
 
                     // Save data in cache.
                     _cache.Set("LocationsList", Locations, cacheEntryOptions);
+                }
+                else
+                {
+                    _cache.TryGetValue("LocationsList", out Locations);
                 }
                 return Locations;
             }

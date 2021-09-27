@@ -7,7 +7,7 @@ namespace RoamlerLocationSearch.Domain.Models
 {
     public class SearchResult
     {
-        //public List<Location> Locations { get; set; }
+        public List<Location> Locations { get; set; }
         public int MaxResults { get; set; }
         public string Error { get; set; }
         public double Latitude { get; set; }
