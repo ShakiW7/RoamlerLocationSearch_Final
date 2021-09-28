@@ -20,4 +20,4 @@ Make sure you have install fallowing to run the project:
 #### Run in Local
 - Open the project from 
 
-#### Architecture
+### Architecture
