@@ -24,18 +24,17 @@ namespace RoamlerLocationSearch.WebAPI
         public Startup(IWebHostEnvironment environment)
         {
             var builder = new ConfigurationBuilder()
-            .SetBasePath(environment.ContentRootPath)
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{environment.EnvironmentName}.json",
-            optional: true)
-            .AddEnvironmentVariables();
+                                .SetBasePath(environment.ContentRootPath)
+                                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                                .AddJsonFile($"appsettings.{environment.EnvironmentName}.json", optional: true)
+                                .AddEnvironmentVariables();
+
             Configuration = builder.Build();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var appSettings = Configuration.GetSection("AppSettings").GetChildren().Select(a => a.Value).ToArray();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -64,15 +63,10 @@ namespace RoamlerLocationSearch.WebAPI
             }
 
             app.UseHsts();
-
             app.UseMiddleware<SecurityHeadersMiddleware>();
-
             app.UseHttpsRedirection();
-
             app.UseRouting();
-
             app.UseAuthorization();
-
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

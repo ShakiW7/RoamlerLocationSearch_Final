@@ -22,8 +22,6 @@ namespace RoamlerLocationSearch.Business
             List<Location> Locations = new List<Location>();
             try
             {
-                //Get all Locations
-                
                 Locations = _LocationDataAccess.GetLocations();
 
                 // calculate distance and add to the list for each location, filter by max location, order by location and use max results
@@ -55,10 +53,9 @@ namespace RoamlerLocationSearch.Business
             List<Location> Locations = new List<Location>();
             try
             {
-                //Get all Locations
                 Locations = _LocationDataAccess.GetLocations();
 
-                // get distance and add to the list for each location
+                // calculate distance and add to the list for each location, filter by max location, order by location and use max results
                 Locations = Locations.AsParallel().WithDegreeOfParallelism(Environment.ProcessorCount)
                                             .Select(c =>
                                             {
@@ -89,6 +86,7 @@ namespace RoamlerLocationSearch.Business
             {
                 Locations = await _LocationDataAccess.GetLocationsAsync();
 
+                // calculate distance and add to the list for each location, filter by max location, order by location and use max results
                 Locations = Locations.Select(c =>
                                             {
                                                 c.Distance = c.CalculateDistance(location);

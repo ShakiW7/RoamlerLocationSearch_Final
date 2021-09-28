@@ -26,9 +26,15 @@ namespace RoamlerLocationSearch.WebAPI.Controllers
         [Route("getLocations")]
         public ActionResult<SearchResult> GetLocations(double latitude, double longitude, int maxDistance, int maxResults)
         {
+            if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180)
+            {
+                string errorMessage = "Arguments Out of Range !";
+                return StatusCode(400, errorMessage);
+            }
+
             try
             {
-                DateTime t1 = DateTime.UtcNow;
+                DateTime startTime = DateTime.UtcNow;
 
                 Location locationobject = new Location(latitude, longitude, "");
                 List<Location> locationList = _locationSearchService.GetLocations(locationobject, maxDistance, maxResults);
@@ -42,10 +48,9 @@ namespace RoamlerLocationSearch.WebAPI.Controllers
                 returnSearchResult.RecordCount = locationList.Count;
                 returnSearchResult.Locations = locationList;
 
-                DateTime t2 = DateTime.UtcNow;
-                TimeSpan t = t2 - t1;
-                double d = t.TotalSeconds;
-                returnSearchResult.TotalDuration = d;
+                DateTime endTime = DateTime.UtcNow;
+                TimeSpan timeSpent = endTime - startTime;
+                returnSearchResult.TotalDuration = timeSpent.TotalSeconds;
 
                 return Ok(returnSearchResult);
             }
@@ -59,9 +64,15 @@ namespace RoamlerLocationSearch.WebAPI.Controllers
         [Route("getLocationsParallel")]
         public IActionResult GetLocationsParallel(double latitude, double longitude, int maxDistance, int maxResults)
         {
+            if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180)
+            {
+                string errorMessage = "Arguments Out of Range !";
+                return StatusCode(400, errorMessage);
+            }
+
             try
             {
-                DateTime t1 = DateTime.UtcNow;
+                DateTime startTime = DateTime.UtcNow;
 
                 Location locationobject = new Location(latitude, longitude, "");
                 List<Location> locationList = _locationSearchService.GetLocationsParallel(locationobject, maxDistance, maxResults);
@@ -75,10 +86,9 @@ namespace RoamlerLocationSearch.WebAPI.Controllers
                 returnSearchResult.RecordCount = locationList.Count;
                 returnSearchResult.Locations = locationList;
 
-                DateTime t2 = DateTime.UtcNow;
-                TimeSpan t = t2 - t1;
-                double d = t.TotalSeconds;
-                returnSearchResult.TotalDuration = d;
+                DateTime endTime = DateTime.UtcNow;
+                TimeSpan timeSpent = endTime - startTime;
+                returnSearchResult.TotalDuration = timeSpent.TotalSeconds;
 
                 return Ok(returnSearchResult);
             }
@@ -92,9 +102,15 @@ namespace RoamlerLocationSearch.WebAPI.Controllers
         [Route("getLocationsAsync")]
         public async Task<IActionResult> GetLocationsAsync(double latitude, double longitude, int maxDistance, int maxResults)
         {
+            if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180)
+            {
+                string errorMessage = "Arguments Out of Range !";
+                return StatusCode(400, errorMessage);
+            }
+
             try
             {
-                DateTime t1 = DateTime.UtcNow;
+                DateTime startTime = DateTime.UtcNow;
 
                 Location locationobject = new Location(latitude, longitude, "");
                 List<Location> locationList = await _locationSearchService.GetLocationsAsync(locationobject, maxDistance, maxResults);
@@ -108,10 +124,9 @@ namespace RoamlerLocationSearch.WebAPI.Controllers
                 returnSearchResult.RecordCount = locationList.Count;
                 returnSearchResult.Locations = locationList;
 
-                DateTime t2 = DateTime.UtcNow;
-                TimeSpan t = t2 - t1;
-                double d = t.TotalSeconds;
-                returnSearchResult.TotalDuration = d;
+                DateTime endTime = DateTime.UtcNow;
+                TimeSpan timeSpent = endTime - startTime;
+                returnSearchResult.TotalDuration = timeSpent.TotalSeconds;
 
                 return Ok(returnSearchResult);
             }

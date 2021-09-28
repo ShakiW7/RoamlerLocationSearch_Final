@@ -16,6 +16,6 @@ namespace RoamlerLocationSearch.Domain.Models
 
         public int MaxDistance { get; set; }
 
-        public double TotalDuration { get; set; } //duration of the search
+        public double TotalDuration { get; set; } 
     }
 }

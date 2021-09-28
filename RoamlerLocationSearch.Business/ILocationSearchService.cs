@@ -10,6 +10,6 @@ namespace RoamlerLocationSearch.Business
     {
         List<Location> GetLocationsParallel(Location location, int maxDistance, int maxResults);
         List<Location> GetLocations(Location location, int maxDistance, int maxResults);
-        Task<List<Location>> GetLocationsAsync(Location pLocation, int maxDistance, int maxResults);
+        Task<List<Location>> GetLocationsAsync(Location location, int maxDistance, int maxResults);
     }
 }

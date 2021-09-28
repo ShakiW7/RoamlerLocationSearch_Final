@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using RoamlerLocationSearch.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -12,24 +13,27 @@ namespace RoamlerLocationSearch.DataAccess
     public class CsvLocationDataAccess: ILocationDataAccess
     {
         private IMemoryCache _cache;
-        //private readonly IConfiguration _config;
-
-        public CsvLocationDataAccess(IMemoryCache memoryCache
-            //, private readonly IConfiguration config
-            )
+        private readonly IConfiguration _config;
+        private readonly string _fileLocation;
+        private readonly int _cacheInterval;
+        private readonly string _cacheKey;
+        public CsvLocationDataAccess(IMemoryCache memoryCache, IConfiguration config)
         {
             _cache = memoryCache;
-            //_config = config;
+            _config = config;
+
+            string fileName = _config.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "CSVFileName").Value;
+            _fileLocation = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, fileName);
+
+            int.TryParse(_config.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "CacheRefreshInterval").Value, out _cacheInterval);
+            _cacheKey = _config.GetSection("AppSettings").GetChildren().FirstOrDefault(x => x.Key == "CacheKey").Value;
         }
 
         public List<Location> GetLocations()
         {
             try
             {
-                List<Location> Locations = new List<Location>();
-                Locations = getAllLocationsCacheStreamReader();
-
-                return Locations;
+                return getAllLocationsCacheStreamReader();
             }
             catch (Exception ex)
             {
@@ -43,10 +47,9 @@ namespace RoamlerLocationSearch.DataAccess
             {
                 List<Location> Locations = new List<Location>();
 
-                if (_cache.Get("LocationsList") == null)
+                if (_cache.Get(_cacheKey) == null)
                 {
-                    string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
-                    using (var reader = new StreamReader(fileLocation))
+                    using (var reader = new StreamReader(_fileLocation))
                     {
                         string line;
                         while ((line = await reader.ReadLineAsync()) != null)
@@ -59,17 +62,13 @@ namespace RoamlerLocationSearch.DataAccess
                         }
 
                         // Set cache options.
-                        var cacheEntryOptions = new MemoryCacheEntryOptions()
-                            // Keep in cache for this time, reset time if accessed.
-                            .SetSlidingExpiration(TimeSpan.FromMinutes(3));
-
-                        // Save data in cache.
-                        _cache.Set("LocationsList", Locations, cacheEntryOptions);
+                        var cacheEntryOptions = GetCacheEntryOptions();
+                        _cache.Set(_cacheKey, Locations, cacheEntryOptions);
                     }
                 }
                 else
                 {
-                    _cache.TryGetValue("LocationsList", out Locations);
+                    _cache.TryGetValue(_cacheKey, out Locations);
                 }
                 return Locations;
             }
@@ -86,11 +85,10 @@ namespace RoamlerLocationSearch.DataAccess
             {
                 List<Location> Locations = new List<Location>();
 
-                if (_cache.Get("LocationsList") == null)
+                if (_cache.Get(_cacheKey) == null)
 
                 {
-                    string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
-                    string[] AllLines = File.ReadAllLines(fileLocation);
+                    string[] AllLines = File.ReadAllLines(_fileLocation);
 
                     var options = new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 4 };
 
@@ -105,16 +103,12 @@ namespace RoamlerLocationSearch.DataAccess
                     });
 
                     // Set cache options.
-                    var cacheEntryOptions = new MemoryCacheEntryOptions()
-                        // Keep in cache for this time, reset time if accessed.
-                        .SetSlidingExpiration(TimeSpan.FromMinutes(3));
-
-                    // Save data in cache.
-                    _cache.Set("LocationsList", Locations, cacheEntryOptions);
+                    var cacheEntryOptions = GetCacheEntryOptions();
+                    _cache.Set(_cacheKey, Locations, cacheEntryOptions);
                 }
                 else
                 {
-                    _cache.TryGetValue("LocationsList", out Locations);
+                    _cache.TryGetValue(_cacheKey, out Locations);
                 }
                 return Locations;
             }
@@ -131,10 +125,9 @@ namespace RoamlerLocationSearch.DataAccess
             {
                 List<Location> Locations = new List<Location>();
 
-                if (_cache.Get("LocationsList") == null)
+                if (_cache.Get(_cacheKey) == null)
                 {
-                    string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
-                    using (StreamReader reader = new StreamReader(fileLocation))
+                    using (StreamReader reader = new StreamReader(_fileLocation))
                     {
                         reader.ReadLine(); //to skip the headers
                         string line;
@@ -149,16 +142,12 @@ namespace RoamlerLocationSearch.DataAccess
                     }
 
                     // Set cache options.
-                    var cacheEntryOptions = new MemoryCacheEntryOptions()
-                        // Keep in cache for this time, reset time if accessed.
-                        .SetSlidingExpiration(TimeSpan.FromMinutes(3));
-
-                    // Save data in cache.
-                    _cache.Set("LocationsList", Locations, cacheEntryOptions);
+                    var cacheEntryOptions = GetCacheEntryOptions();
+                    _cache.Set(_cacheKey, Locations, cacheEntryOptions);
                 }
                 else
                 {
-                    _cache.TryGetValue("LocationsList",out Locations);
+                    _cache.TryGetValue(_cacheKey, out Locations);
                 }
                 return Locations;
             }
@@ -175,12 +164,9 @@ namespace RoamlerLocationSearch.DataAccess
             {
                 List<Location> Locations = new List<Location>();
 
-                if (_cache.Get("LocationsList") == null)
+                if (_cache.Get(_cacheKey) == null)
                 {
-                    string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
-
-                    string[] AllLines = File.ReadAllLines(fileLocation);
-
+                    string[] AllLines = File.ReadAllLines(_fileLocation);
                     var qLocations = AllLines.Skip(1).Select(data =>
                     {
                         var data2 = data.Split(new[] { "\",\"" }, StringSplitOptions.RemoveEmptyEntries);
@@ -193,16 +179,12 @@ namespace RoamlerLocationSearch.DataAccess
                     Locations = qLocations.ToList();
 
                     // Set cache options.
-                    var cacheEntryOptions = new MemoryCacheEntryOptions()
-                        // Keep in cache for this time, reset time if accessed.
-                        .SetSlidingExpiration(TimeSpan.FromMinutes(3));
-
-                    // Save data in cache.
-                    _cache.Set("LocationsList", Locations, cacheEntryOptions);
+                    var cacheEntryOptions = GetCacheEntryOptions();
+                    _cache.Set(_cacheKey, Locations, cacheEntryOptions);
                 }
                 else
                 {
-                    _cache.TryGetValue("LocationsList", out Locations);
+                    _cache.TryGetValue(_cacheKey, out Locations);
                 }
                 return Locations;
             }
@@ -210,6 +192,12 @@ namespace RoamlerLocationSearch.DataAccess
             {
                 throw ex;
             }
+        }
+
+        private MemoryCacheEntryOptions GetCacheEntryOptions()
+        {
+            return new MemoryCacheEntryOptions()
+                        .SetSlidingExpiration(TimeSpan.FromMinutes(_cacheInterval));
         }
 
     }
