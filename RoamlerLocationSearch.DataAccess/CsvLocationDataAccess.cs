@@ -87,6 +87,7 @@ namespace RoamlerLocationSearch.DataAccess
                 List<Location> Locations = new List<Location>();
 
                 if (_cache.Get("LocationsList") == null)
+
                 {
                     string fileLocation = "C:\\Users\\chath\\source\\repos\\LocationSearch.DataAccess\\Resources\\locations(5).csv";
                     string[] AllLines = File.ReadAllLines(fileLocation);

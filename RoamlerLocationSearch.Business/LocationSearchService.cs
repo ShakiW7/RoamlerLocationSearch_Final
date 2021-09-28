@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using RoamlerLocationSearch.Business.Extensions;
 
 namespace RoamlerLocationSearch.Business
 {
@@ -18,24 +19,27 @@ namespace RoamlerLocationSearch.Business
 
         public List<Location> GetLocations(Location location, int maxDistance, int maxResults)
         {
-            List<Location> filteredList = new List<Location>();
+            List<Location> Locations = new List<Location>();
             try
             {
                 //Get all Locations
-                List<Location> Locations = new List<Location>();
+                
                 Locations = _LocationDataAccess.GetLocations();
 
-
-                //Sort by Distance
-                List<Location> SortedList = Locations.ToList();//.OrderBy(o => o.CalculateDistance(pLocation)).ToList(); // do the orderby
-
-                //Filter the Locations with the same Distance, Longitude and Latitude
-                List<Location> filterRepeated = SortedList.GroupBy(x => new { x.Distance, x.Longitude, x.Latitude })
-                                                   .Select(g => g.First())
-                                                   .ToList();
-
-                //Filter by the max Number of Results
-                filteredList = filterRepeated.Where(x => x.Distance <= maxDistance).Take(maxResults).ToList();
+                // calculate distance and add to the list for each location, filter by max location, order by location and use max results
+                Locations = Locations.Select(c => 
+                                        {
+                                            c.Distance = c.CalculateDistance(location);
+                                            if(maxDistance >= c.Distance)
+                                            {
+                                                return c;
+                                            }
+                                            return null;
+                                        })
+                                        .Where(c => c != null)
+                                        .OrderBy(c => c.Distance)
+                                        .Take(maxResults)
+                                        .ToList();
 
             }
             catch (Exception ex)
@@ -43,61 +47,61 @@ namespace RoamlerLocationSearch.Business
                 throw ex;
             }
 
-            return filteredList;
+            return Locations;
         }
 
         public List<Location> GetLocationsParallel(Location location, int maxDistance, int maxResults)
         {
-            List<Location> filteredList = new List<Location>();
+            List<Location> Locations = new List<Location>();
             try
             {
                 //Get all Locations
-                List<Location> Locations = new List<Location>();
                 Locations = _LocationDataAccess.GetLocations();
 
-
-                //Sort by Distance
-                //Added Parallelism
-                List<Location> SortedList = Locations.AsParallel()
-                                                    .WithDegreeOfParallelism(Environment.ProcessorCount)
-                                                   // .OrderBy(o => o.CalculateDistance(pLocation))
-                                                    .ToList();
-
-                //Filter the Locations with the same Distance, Longitude and Latitude
-                List<Location> filterRepeated = SortedList.AsParallel()
-                                                    .WithDegreeOfParallelism(Environment.ProcessorCount)
-                                                    .GroupBy(x => new { x.Distance, x.Longitude, x.Latitude })
-                                                    .Select(g => g.First())
-                                                    .ToList();
-
-                //Filter by the max Number of Results
-                filteredList = filterRepeated.Where(x => x.Distance <= maxDistance).Take(maxResults).ToList();
+                // get distance and add to the list for each location
+                Locations = Locations.AsParallel().WithDegreeOfParallelism(Environment.ProcessorCount)
+                                            .Select(c =>
+                                            {
+                                                c.Distance = c.CalculateDistance(location);
+                                                if (maxDistance >= c.Distance)
+                                                {
+                                                    return c;
+                                                }
+                                                return null;
+                                            })
+                                            .Where(c => c != null)
+                                            .OrderBy(c => c.Distance)
+                                            .Take(maxResults)
+                                            .ToList();
             }
             catch (Exception ex)
             {
                 throw ex;
             }
 
-            return filteredList;
+            return Locations;
         }
 
-        public async Task<List<Location>> GetLocationsAsync(Location pLocation, int maxDistance, int maxResults)
+        public async Task<List<Location>> GetLocationsAsync(Location location, int maxDistance, int maxResults)
         {
-            List<Location> filteredList = new List<Location>();
+            List<Location> Locations = new List<Location>();
             try
             {
-                List<Location> Locations = await _LocationDataAccess.GetLocationsAsync();
+                Locations = await _LocationDataAccess.GetLocationsAsync();
 
-                //Sort by Distance
-                List<Location> SortedList = Locations;//.OrderBy(o => o.CalculateDistance(pLocation)).ToList();
-
-                //Filter the Locations with the same Distance, Longitude and Latitude
-                List<Location> filterRepeated = SortedList.GroupBy(x => new { x.Distance, x.Longitude, x.Latitude })
-                                                   .Select(g => g.First())
-                                                   .ToList();
-
-                //Filter by the max Number of Results
-                filteredList = filterRepeated.Where(x => x.Distance <= maxDistance).Take(maxResults).ToList();
+                Locations = Locations.Select(c =>
+                                            {
+                                                c.Distance = c.CalculateDistance(location);
+                                                if (maxDistance >= c.Distance)
+                                                {
+                                                    return c;
+                                                }
+                                                return null;
+                                            })
+                                            .Where(c => c != null)
+                                            .OrderBy(c => c.Distance)
+                                            .Take(maxResults)
+                                            .ToList();
 
             }
             catch (Exception ex)
@@ -105,7 +109,7 @@ namespace RoamlerLocationSearch.Business
                 throw ex;
             }
 
-            return filteredList;
+            return Locations;
         }
     }
 }
