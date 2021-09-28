@@ -28,8 +28,7 @@ namespace RoamlerLocationSearch.WebAPI.Controllers
         {
             if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180)
             {
-                string errorMessage = "Arguments Out of Range !";
-                return StatusCode(400, errorMessage);
+                return BadRequest("Arguments Out of Range !");
             }
 
             try
@@ -66,8 +65,7 @@ namespace RoamlerLocationSearch.WebAPI.Controllers
         {
             if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180)
             {
-                string errorMessage = "Arguments Out of Range !";
-                return StatusCode(400, errorMessage);
+                return BadRequest("Arguments Out of Range !"); 
             }
 
             try
@@ -104,8 +102,7 @@ namespace RoamlerLocationSearch.WebAPI.Controllers
         {
             if (latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180)
             {
-                string errorMessage = "Arguments Out of Range !";
-                return StatusCode(400, errorMessage);
+                return BadRequest("Arguments Out of Range !");
             }
 
             try

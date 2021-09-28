@@ -13,9 +13,7 @@ namespace RoamlerLocationSearch.Domain.Models
         public double Latitude { get; set; }
         public double Longitude { get; set; }
         public int RecordCount { get; set; }
-
         public int MaxDistance { get; set; }
-
         public double TotalDuration { get; set; } 
     }
 }
