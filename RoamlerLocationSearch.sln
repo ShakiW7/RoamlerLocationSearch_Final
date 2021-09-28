@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoamlerLocationSearch.Domai
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoamlerLocationSearch.Business", "RoamlerLocationSearch.Business\RoamlerLocationSearch.Business.csproj", "{BBC41E82-B995-4199-9AC7-2E4D1CD56939}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RoamlerLocationSearch.Tests", "RoamlerLocationSearch.Tests\RoamlerLocationSearch.Tests.csproj", "{B59B6288-8159-499D-843D-8D2F8B61499D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{BBC41E82-B995-4199-9AC7-2E4D1CD56939}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BBC41E82-B995-4199-9AC7-2E4D1CD56939}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BBC41E82-B995-4199-9AC7-2E4D1CD56939}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B59B6288-8159-499D-843D-8D2F8B61499D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B59B6288-8159-499D-843D-8D2F8B61499D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B59B6288-8159-499D-843D-8D2F8B61499D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B59B6288-8159-499D-843D-8D2F8B61499D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

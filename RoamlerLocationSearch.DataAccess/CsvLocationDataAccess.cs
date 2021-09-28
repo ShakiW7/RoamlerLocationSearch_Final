@@ -51,6 +51,7 @@ namespace RoamlerLocationSearch.DataAccess
                 {
                     using (var reader = new StreamReader(_fileLocation))
                     {
+                        reader.ReadLine();
                         string line;
                         while ((line = await reader.ReadLineAsync()) != null)
                         {
