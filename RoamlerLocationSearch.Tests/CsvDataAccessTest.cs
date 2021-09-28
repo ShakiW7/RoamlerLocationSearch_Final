@@ -47,16 +47,14 @@ namespace RoamlerLocationSearch.Tests
         [Fact]
         public void ReadCsvGetLocationsAsyncShouldEqualRowCount()
         {
-            ReadCsvGetLocationsAsync().Wait();
-        }
-
-        private async Task ReadCsvGetLocationsAsync()
-        {
             //Arrange
             int numberOfRows = 168891;
+            List<Location> locationSet = new List<Location>();
 
-            //Act
-            List<Location> locationSet = await _sut.GetLocationsAsync();
+            Task.Run(async () =>
+            {
+               locationSet = await _sut.GetLocationsAsync();
+            }).GetAwaiter().GetResult();
 
             //Assert
             Assert.Equal(numberOfRows, locationSet.Count);
